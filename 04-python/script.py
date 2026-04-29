@@ -1,10 +1,14 @@
+<<<<<<< HEAD
 import re
+=======
+>>>>>>> upstream/main
 
 users = [
     {"name": "Alice", "email": "alice@gmail.com"},
     {"name": "Bob",   "email": "bob@yahoo.com"},
-    {"name": "Carol", "email": "alice@gmail.com"},   # duplicate
+    {"name": "Carol", "email": "alice@gmail.com"},   
     {"name": "Dave",  "email": "dave@gmail.com"},
+<<<<<<< HEAD
     {"name": "Eve",   "email": "not-an-email"},      # invalid
     {"name": "Frank", "email": "frank@"},            # invalid
 ]
@@ -14,6 +18,15 @@ def validate_email(email):
     pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
     return re.match(pattern, email) is not None
 
+=======
+    {"name": "Eve",   "email": "not-an-email"},      
+    {"name": "Frank", "email": "frank@"},            
+]
+
+def validate_email(email):
+    
+    return "@" in email
+>>>>>>> upstream/main
 
 def group_by_domain(users):
     result = {}
@@ -21,6 +34,7 @@ def group_by_domain(users):
 
     for user in users:
         email = user["email"]
+<<<<<<< HEAD
 
         # skip invalid emails
         if not validate_email(email):
@@ -43,3 +57,14 @@ def group_by_domain(users):
 
 output = group_by_domain(users)
 print(output)
+=======
+        if validate_email(email):
+            
+            domain = email          
+            
+            result[domain] = 1      
+    return result
+
+output = group_by_domain(users)
+print(output)
+>>>>>>> upstream/main

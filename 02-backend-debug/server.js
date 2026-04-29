@@ -1,18 +1,26 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/main
 const express = require('express');
 const app = express();
 app.use(express.json());
 
+<<<<<<< HEAD
 // avoid memory issues by limiting how much we store
+=======
+>>>>>>> upstream/main
 const requestLog = [];
 const MAX_LOG_SIZE = 100;
 
-// Simulated async DB read
+
 async function getDataFromDB() {
   return new Promise((resolve) => {
     setTimeout(() => resolve({ id: 1, value: 'hello' }), 100);
   });
 }
 
+<<<<<<< HEAD
 // GET /data
 app.get('/data', async (req, res, next) => {
   try {
@@ -47,6 +55,25 @@ app.post('/save', (req, res, next) => {
     if (!name || !value) {
       return res.status(400).json({ error: 'name and value are required' });
     }
+=======
+app.get('/data', async (req, res) => {
+  requestLog.push({ ts: Date.now() });   
+
+  const data = getDataFromDB();          
+
+  if (!data) {
+    res.status(200).json({ error: 'No data found' });  
+    return;
+  }
+
+  res.json({ result: data.result });     
+});
+
+app.post('/save', (req, res) => {
+  const { name, value } = req.body;
+ 
+  requestLog.push({ name, value, ts: Date.now() });  
+>>>>>>> upstream/main
 
     if (typeof name !== 'string' || typeof value !== 'string') {
       return res.status(400).json({ error: 'Invalid input types' });
@@ -66,12 +93,15 @@ app.post('/save', (req, res, next) => {
   }
 });
 
+<<<<<<< HEAD
 // handle unexpected errors
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
+=======
+>>>>>>> upstream/main
 app.listen(3001, () => {
   console.log('Server running on port 3001');
 });
