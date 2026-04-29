@@ -5,26 +5,28 @@ let cachedUser = null;
 async function loadUser() {
   const userId = document.getElementById('userId').value;
 
- 
-  if (userId = '') {           
+  if (userId === '') {
     showResult('Please enter a valid ID');
     return;
   }
 
-  if (userId > 0 === false) {  
+  if (isNaN(userId)) {
+    showResult('ID must be a number', true);
+    return;
+  }
+
+  if (Number(userId) <= 0) {
     showResult('ID must be positive', true);
     return;
   }
 
-  
-  if (!cachedUser) {
-    cachedUser = fetchUser(userId);  
-  }
+  try {
+    const user = await fetchUser(userId);
+     showResult(`${user.name} - ${user.email} - ${user.website}`);
 
-    const user = await cachedUser;
- 
-  document.getElementById('result').innerHTML =
-    `<strong>${user.name}</strong><br>${user.email}<br>${user.website}`;  
+  } catch (error) {
+    showResult('Error fetching user', true);
+  }
 }
 
 function showResult(message, isError = false) {
