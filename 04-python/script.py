@@ -1,8 +1,4 @@
-# script.py
-# BUG #1: naive email validation — only checks for "@", accepts "a@b"
-# BUG #2: no deduplication — duplicates counted multiple times
-# BUG #3: grouping logic is wrong — groups by full email, not by domain
-# BUG #4: count is always 1 — doesn't accumulate
+import re
 
 users = [
     {"name": "Alice", "email": "alice@gmail.com"},
@@ -10,30 +6,40 @@ users = [
     {"name": "Carol", "email": "alice@gmail.com"},   # duplicate
     {"name": "Dave",  "email": "dave@gmail.com"},
     {"name": "Eve",   "email": "not-an-email"},      # invalid
-    {"name": "Frank", "email": "frank@"},            # invalid — BUG #1 would accept this
+    {"name": "Frank", "email": "frank@"},            # invalid
 ]
 
 def validate_email(email):
-    # BUG #1: only checks for "@" — accepts "a@", "@b", "@@"
-    return "@" in email
+    # Proper email validation using regex
+    pattern = r"^[\w\.-]+@[\w\.-]+\.\w+$"
+    return re.match(pattern, email) is not None
+
 
 def group_by_domain(users):
     result = {}
+    seen_emails = set()  # deduplication
+
     for user in users:
         email = user["email"]
-        if validate_email(email):
-            # BUG #3: uses full email as key instead of domain
-            # BUG #2: no deduplication — alice@gmail.com counted twice
-            domain = email          # BUG #3: should be email.split("@")[1]
-            # BUG #4: always sets to 1 instead of incrementing
-            result[domain] = 1      # BUG #4: should be result.get(domain, 0) + 1
+
+        # skip invalid emails
+        if not validate_email(email):
+            continue
+
+        # skip duplicates
+        if email in seen_emails:
+            continue
+
+        seen_emails.add(email)
+
+        # extract domain
+        domain = email.split("@")[1]
+
+        # count occurrences properly
+        result[domain] = result.get(domain, 0) + 1
+
     return result
+
 
 output = group_by_domain(users)
 print(output)
-
-# Expected output (after fixes):
-# {"gmail.com": 2, "yahoo.com": 1}
-#
-# Current (buggy) output:
-# {"alice@gmail.com": 1, "bob@yahoo.com": 1, "alice@gmail.com": 1, "dave@gmail.com": 1, "frank@": 1}
